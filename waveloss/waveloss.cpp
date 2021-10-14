@@ -33,7 +33,7 @@ struct Waveloss : csnd::Plugin<1, 4> {
   int drop;
   int max;
   int count;
-  MYFLT on;
+  bool on;
   int mode;
   MYFLT previous_sample;
   std::mt19937 generator;
@@ -44,7 +44,6 @@ struct Waveloss : csnd::Plugin<1, 4> {
     count = 0;
     max = inargs[2];
     mode = inargs[3];
-    mode = (mode > 1) ? 0 : mode;
     return OK;
   }
   
@@ -53,10 +52,9 @@ struct Waveloss : csnd::Plugin<1, 4> {
     for (int i=offset; i < nsmps; i++) {
       if (previous_sample <= 0 && inargs(0)[i] >=0) {
         if (mode == 1) {
-          std::uniform_int_distribution<int> distribution(drop,max);
-          auto dice = std::bind ( distribution, generator );
-          MYFLT random_value = dice();
-          on = (random_value/MYFLT(max)) >= (MYFLT(drop)/MYFLT(max));
+          std::uniform_int_distribution<int> distribution(0,max);
+          int random_value = distribution(generator);
+          on = random_value >= drop;
         } else {
           count = count >= max ? 0 : ++count ;
           on = count >= drop;
