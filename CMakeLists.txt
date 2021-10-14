@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.12)
 
-project(waveloss)
+project(csound_opcodes)
 
 # Release or Debug
 set(CMAKE_BUILD_TYPE "Release")
@@ -284,9 +284,17 @@ separate_arguments(CLANG_DEFINITIONS_LIST NATIVE_COMMAND ${CLANG_DEFINITIONS})
 add_definitions(${CLANG_DEFINITIONS_LIST})
 
 link_directories("/usr/local/lib")
+
 make_plugin(waveloss waveloss/waveloss.cpp)
 target_include_directories(waveloss PRIVATE
 ${CSOUND_INCLUDE_DIRS})
 
 target_link_libraries(waveloss ${clang_libs})
 target_compile_options(waveloss PRIVATE "-std=c++17")
+
+make_plugin(pan3 pan3/pan3.cpp)
+target_include_directories(pan3 PRIVATE
+${CSOUND_INCLUDE_DIRS})
+
+target_link_libraries(pan3 ${clang_libs})
+target_compile_options(pan3 PRIVATE "-std=c++17")
