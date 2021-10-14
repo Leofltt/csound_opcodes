@@ -42,13 +42,13 @@ struct Waveloss : csnd::Plugin<1, 4> {
     previous_sample = 0;
     on = 1;
     count = 0;
-    max = inargs[2];
     mode = inargs[3];
     return OK;
   }
   
   int aperf() {
     drop = inargs[1];
+    max = inargs[2];
     for (int i=offset; i < nsmps; i++) {
       if (previous_sample <= 0 && inargs(0)[i] >=0) {
         if (mode == 1) {
