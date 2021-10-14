@@ -22,6 +22,7 @@
 */
 
 #include <plugin.h>
+#include <random>
 
 // Divide an audio stream into tiny segments, using the signal's zero-crossings as segment boundaries, and discard a fraction of them (i.e. replace them with silence of the same length). The technique was described by Trevor Wishart in a lecture.
 // Parameters: the filter drops [1] out of [2] chunks. 
@@ -35,8 +36,7 @@ struct Waveloss : csnd::Plugin<1, 4> {
   MYFLT on;
   int mode;
   MYFLT previous_sample;
-
-
+  std::default_random_engine generator;
   
   int init() {
     previous_sample = 0;
@@ -50,14 +50,14 @@ struct Waveloss : csnd::Plugin<1, 4> {
   
   int aperf() {
     drop = inargs[1];
-    csnd::AudioSig in(this,inargs(0));
-    csnd::AudioSig out(this,outargs(0));
     for (int i=offset; i < nsmps; i++) {
       if (previous_sample <= 0 && inargs(0)[i] >=0) {
-        if (mode == 0) {
-          count = count >= max ? 0 : ++count ;
-          on = drop > count ? 1 : 0;
-        } else if (mode == 1) {
+        if (mode == 1) {
+          std::uniform_int_distribution<int> distribution(drop,max);
+          auto dice = std::bind ( distribution, generator );
+          MYFLT random_value = dice();
+          on = random_value >= (MYFLT(drop)/MYFLT(max));
+        } else {
           count = count >= max ? 0 : ++count ;
           on = count >= drop;
         }
