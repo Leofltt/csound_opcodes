@@ -56,7 +56,7 @@ struct Waveloss : csnd::Plugin<1, 4> {
           std::uniform_int_distribution<int> distribution(drop,max);
           auto dice = std::bind ( distribution, generator );
           MYFLT random_value = dice();
-          on = random_value >= (MYFLT(drop)/MYFLT(max));
+          on = (random_value/MYFLT(max)) >= (MYFLT(drop)/MYFLT(max));
         } else {
           count = count >= max ? 0 : ++count ;
           on = count >= drop;
