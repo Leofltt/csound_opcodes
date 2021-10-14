@@ -7,7 +7,7 @@ A few opcodes for Csound
 * Pan3 : 3 stereo panning algorithms (constant power sin, constant power sqrt, mid/side)
 
 
-To install and build
+To build and install (requires Csound and cmake)
 
 ```
 git clone https://github.com/Leofltt/csound_opcodes.git
