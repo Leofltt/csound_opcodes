@@ -26,7 +26,7 @@
 
 // Divide an audio stream into tiny segments, using the signal's zero-crossings as segment boundaries, and discard a fraction of them (i.e. replace them with silence of the same length). The technique was described by Trevor Wishart in a lecture.
 // Parameters: the filter drops [1] out of [2] chunks. 
-// [3] can be 1 to drop chunks in a simple deterministic fashion (e.g. always dropping the first 30 out of a set of 40 segments), or 2 to drop chunks randomly but in an appropriate proportion.
+// [3] can be 0 to drop chunks in a simple deterministic fashion (e.g. always dropping the first 30 out of a set of 40 segments), or 1 to drop chunks randomly but in an appropriate proportion.
 
 struct Waveloss : csnd::Plugin<1, 4> {
 
