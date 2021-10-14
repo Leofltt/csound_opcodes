@@ -36,7 +36,7 @@ struct Waveloss : csnd::Plugin<1, 4> {
   MYFLT on;
   int mode;
   MYFLT previous_sample;
-  std::default_random_engine generator;
+  std::mt19937 generator;
   
   int init() {
     previous_sample = 0;
