@@ -71,5 +71,8 @@ struct Waveloss : csnd::Plugin<1, 4> {
 #include <modload.h>
 
 void csnd::on_load(Csound *csound) {
-  csnd::plugin<Waveloss>(csound, "waveloss.aa", "a", "akii", csnd::thread::ia);
+  csnd::plugin<Waveloss>(csound, "waveloss", "a", "akki", csnd::thread::ia); 
+  csnd::plugin<Waveloss>(csound, "waveloss", "a", "akii", csnd::thread::ia);
+  csnd::plugin<Waveloss>(csound, "waveloss", "a", "aiki", csnd::thread::ia); 
+  csnd::plugin<Waveloss>(csound, "waveloss", "a", "aiii", csnd::thread::ia); 
 }
