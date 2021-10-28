@@ -24,10 +24,12 @@
 
 #define PIHALF  M_PI/2
 
-// Parameters: 
-// [0] : left input, [1] : right input
-// [2] : control value 0 - 1 (left to right / mid to side)
-// [3] : modes : 0 - constant power sin, 1 - constant power sqrt, 2 - mid/size
+/*
+ Parameters: 
+ [0] : left input, [1] : right input
+ [2] : control value 0 - 1 (left to right / mid to side)
+ [3] : modes : 0 - constant power sin, 1 - constant power sqrt, 2 - mid/size
+*/
 
 struct Pan3 : csnd::Plugin<2, 4> {
 
