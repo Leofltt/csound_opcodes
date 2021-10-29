@@ -22,17 +22,23 @@
 
 #include <plugin.h>
 
-// inargs : amplitude, cps, table
+// inargs : amplitude, cps, osc table, phase table
 
-struct PDOsc : csnd::Plugin<1, 3> {
+struct PDOsc : csnd::Plugin<1, 4> {
   
-  csnd::Table table;
-  double scl;
-  double idx;
+  csnd::Table phase_table;
+  csnd::Table osc_table;
+  double idp,idx;
+  double s,z;
+  double sr;
 
   int init() {
-    table.init(csound, inargs(2));
-    scl = table.len() / csound->sr();
+    phase_table.init(csound, inargs(3));
+    osc_table.init(csound, inargs(2));
+    s = phase_table.len();
+    z = osc_table.len();
+    sr = csound->sr();
+    idp = 0.;
     idx = 0.;
     return OK;
   }
@@ -40,14 +46,16 @@ struct PDOsc : csnd::Plugin<1, 3> {
   int aperf() {
     csnd::AudioSig out(this, outargs(0));
     MYFLT amp = inargs[0];
-    MYFLT si = inargs[1] * scl;
+    MYFLT freq = inargs[1];
+    MYFLT ph = freq / sr;
     for (auto &sample : out) {
-      sample = amp * table[(uint32_t)idx];
-      idx += si;
-      while (idx < 0)
-        idx += table.len();
-      while (idx >= table.len())
-        idx -= table.len();
+      idx = phase_table[(uint32_t)(idp * s)];
+      sample = amp * osc_table[(uint32_t)(idx * z)];
+      idp += ph;
+      while (idp < 0.)
+        idp += 1.;
+      while (idp >= 1.)
+        idp -= 1.;
     }
     return OK;
   }
@@ -56,13 +64,22 @@ struct PDOsc : csnd::Plugin<1, 3> {
 #include <modload.h>
 
 void csnd::on_load(Csound *csound) {
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "iii", csnd::thread::ia);
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "iki", csnd::thread::ia);
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "kii", csnd::thread::ia);
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "aii", csnd::thread::ia);
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "iai", csnd::thread::ia);
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "kki", csnd::thread::ia); 
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "aki", csnd::thread::ia); 
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "kai", csnd::thread::ia); 
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "aai", csnd::thread::ia); 
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "iiii", csnd::thread::ia);
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "ikii", csnd::thread::ia);
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "kiii", csnd::thread::ia);
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "aiii", csnd::thread::ia);
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "iaii", csnd::thread::ia);
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "kkii", csnd::thread::ia); 
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "akii", csnd::thread::ia); 
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "kaii", csnd::thread::ia); 
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "aaii", csnd::thread::ia); 
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "iiii", csnd::thread::ia);
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "ikii", csnd::thread::ia);
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "kiii", csnd::thread::ia);
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "aiii", csnd::thread::ia);
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "iaii", csnd::thread::ia);
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "kkii", csnd::thread::ia); 
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "akii", csnd::thread::ia); 
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "kaii", csnd::thread::ia); 
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "aaii", csnd::thread::ia); 
 }

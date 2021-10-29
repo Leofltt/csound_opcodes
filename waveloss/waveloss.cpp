@@ -41,7 +41,7 @@ struct Waveloss : csnd::Plugin<1, 4> {
   std::mt19937 generator;
   
   int init() {
-    previous_sample = 0;
+    previous_sample = 0.;
     on = 1;
     count = 0;
     mode = inargs[3];
