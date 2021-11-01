@@ -31,43 +31,52 @@
  [3] : modes : 0 - constant power sin, 1 - constant power sqrt, 2 - mid/size
 */
 
-struct Pan3 : csnd::Plugin<2, 4> {
+struct Pan3 : csnd::Plugin<2, 4> 
+{
 
   int mode;
   MYFLT control;
   
-  int init() {
+  int init() 
+  {
     mode = inargs[3];
     return OK;
   }
   
-  int aperf() {
+  int aperf() 
+  {
+    csnd::AudioSig inL(this, inargs(0));
+    csnd::AudioSig outL(this, outargs(0));
+    csnd::AudioSig inR(this, inargs(1));
+    csnd::AudioSig outR(this, outargs(1));
     control = inargs[2];
-    for (int i=offset; i < nsmps; i++) {
-      switch(mode) {
+    for (int i=offset; i < nsmps; i++) 
+    {
+      switch(mode) 
+      {
           case 0:
           default:
           {
-            outargs(0)[i] = inargs(0)[i] * sin(1-control * PIHALF);
-            outargs(1)[i] = inargs(1)[i] * sin(control * PIHALF);
+            outL[i] = inL[i] * sin(1-control * PIHALF);
+            outR[i] = inR[i] * sin(control * PIHALF);
           } break;
           case 1:
           {
-            outargs(0)[i] = inargs(0)[i] * sqrt(1-control);
-            outargs(1)[i] = inargs(1)[i] * sqrt(control);
+            outL[i] = inL[i] * sqrt(1-control);
+            outR[i] = inR[i] * sqrt(control);
           } break;
           case 2:
           {
-            MYFLT mid = inargs(0)[i] + inargs(1)[i];
-            MYFLT side = inargs(0)[i] - inargs(1)[i];
+            MYFLT mid = inL[i] + inR[i];
+            MYFLT side = inL[i] - inR[i];
             mid *= 0.5;
             side *= 0.5; 
             mid *= (1 - control);
             side *= control; 
             MYFLT ms_left = mid + side;
             MYFLT ms_right = mid - side;
-            outargs(0)[i] = ms_left;
-            outargs(1)[i] = ms_right;
+            outL[i] = ms_left;
+            outR[i] = ms_right;
           } break;
       }
     }
@@ -78,7 +87,8 @@ struct Pan3 : csnd::Plugin<2, 4> {
 
 #include <modload.h>
 
-void csnd::on_load(Csound *csound) {
+void csnd::on_load(Csound *csound) 
+{
   csnd::plugin<Pan3>(csound, "pan3", "aa", "aaai", csnd::thread::ia); 
   csnd::plugin<Pan3>(csound, "pan3", "aa", "aaki", csnd::thread::ia);
 }

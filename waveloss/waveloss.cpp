@@ -30,7 +30,8 @@
  [3] can be 0 to drop chunks in a simple deterministic fashion (e.g. always dropping the first 30 out of a set of 40 segments), or 1 to drop chunks randomly but in an appropriate proportion.
 */
 
-struct Waveloss : csnd::Plugin<1, 4> {
+struct Waveloss : csnd::Plugin<1, 4> 
+{
 
   uint32_t drop;
   uint32_t max;
@@ -40,7 +41,8 @@ struct Waveloss : csnd::Plugin<1, 4> {
   MYFLT previous_sample;
   std::mt19937 generator;
   
-  int init() {
+  int init() 
+  {
     previous_sample = 0.;
     on = 1;
     count = 0;
@@ -48,22 +50,29 @@ struct Waveloss : csnd::Plugin<1, 4> {
     return OK;
   }
   
-  int aperf() {
+  int aperf() 
+  {
+    csnd::AudioSig in(this, inargs(0));
+    csnd::AudioSig out(this, outargs(0));
     drop = inargs[1];
     max = inargs[2];
-    for (int i=offset; i < nsmps; i++) {
-      if (previous_sample <= 0 && inargs(0)[i] >=0) {
-        if (mode == 1) {
+    for (int i=offset; i < nsmps; i++) 
+    {
+      if (previous_sample <= 0 && in[i] >=0) 
+      {
+        if (mode == 1) 
+        {
           std::uniform_int_distribution<int> distribution(0,max);
           int random_value = distribution(generator);
           on = random_value >= drop;
-        } else {
+        } else 
+        {
           count = count >= max ? 0 : ++count ;
           on = count >= drop;
         }
       }
-      previous_sample = inargs(0)[i];
-      outargs(0)[i] = inargs(0)[i] * on;
+      previous_sample = in[i];
+      out[i] = in[i] * on;
     }
     return OK;
   }

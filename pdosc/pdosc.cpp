@@ -24,7 +24,8 @@
 
 // inargs : amplitude, cps, osc table, phase table
 
-struct PDOsc : csnd::Plugin<1, 4> {
+struct PDOsc : csnd::Plugin<1, 4> 
+{
   
   csnd::Table phase_table;
   csnd::Table osc_table;
@@ -32,7 +33,8 @@ struct PDOsc : csnd::Plugin<1, 4> {
   double s,z;
   double sr;
 
-  int init() {
+  int init() 
+  {
     phase_table.init(csound, inargs(3));
     osc_table.init(csound, inargs(2));
     s = phase_table.len();
@@ -43,12 +45,14 @@ struct PDOsc : csnd::Plugin<1, 4> {
     return OK;
   }
 
-  int aperf() {
+  int aperf() 
+  {
     csnd::AudioSig out(this, outargs(0));
     MYFLT amp = inargs[0];
     MYFLT freq = inargs[1];
     MYFLT ph = freq / sr;
-    for (auto &sample : out) {
+    for (auto &sample : out) 
+    {
       idx = phase_table[(uint32_t)(idp * s)];
       sample = amp * osc_table[(uint32_t)(idx * z)];
       idp += ph;
@@ -63,7 +67,8 @@ struct PDOsc : csnd::Plugin<1, 4> {
 
 #include <modload.h>
 
-void csnd::on_load(Csound *csound) {
+void csnd::on_load(Csound *csound) 
+{
   csnd::plugin<PDOsc>(csound, "pdosc", "a", "iiii", csnd::thread::ia);
   csnd::plugin<PDOsc>(csound, "pdosc", "a", "ikii", csnd::thread::ia);
   csnd::plugin<PDOsc>(csound, "pdosc", "a", "kiii", csnd::thread::ia);
