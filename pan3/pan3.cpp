@@ -22,7 +22,7 @@
 
 #include <plugin.h>
 
-#define PIHALF  M_PI/2
+#define PIHALF  M_PI/2.0
 
 /*
  Parameters: 

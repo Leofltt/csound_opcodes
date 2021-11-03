@@ -8,6 +8,8 @@ A few opcodes for Csound
 
 * PDOsc : Phase Distortion oscillator
 
+* Wavefolder : wavefolder based on https://ccrma.stanford.edu/~jatin/ComplexNonlinearities/Wavefolder.html by Jatin Chowdhury
+
 
 To build and install (requires Csound and cmake)
 
