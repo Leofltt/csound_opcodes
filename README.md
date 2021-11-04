@@ -4,7 +4,7 @@ A few opcodes for Csound
 
 * Waveloss : based on waveloss ugen from SC
 
-* Pan3 : 3 stereo panning algorithms (constant power sin, constant power sqrt, mid/side)
+* Pan3 : stereo panning algorithms (constant power sin, constant power sqrt, mid/side)
 
 * PDOsc : Phase Distortion oscillator
 

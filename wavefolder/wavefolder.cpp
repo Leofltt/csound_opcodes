@@ -28,19 +28,19 @@
 /*
  Parameters: 
  [0] : input
- [1] : amp
- [2] : trim
- [3] : feedback
- [4] : control value
+ [1] : trim (gain of folded path)
+ [2] : feedback (0 - 1)
+ [3] : feedforward (0 - 1)
+ [4] : control (0 - 1) 
  [5] : mode (0 for sine folding, 1 for triangle folding)
 */
 
 struct Wavefolder : csnd::Plugin<1, 6> 
 {
-  double amp;
   double trim;
   double feedback;
-  double control;
+  double feedforward;
+  double control; 
   int mode;
   MYFLT previous_sample;
   
@@ -55,9 +55,9 @@ struct Wavefolder : csnd::Plugin<1, 6>
   {
     csnd::AudioSig in(this, inargs(0));
     csnd::AudioSig out(this, outargs(0));
-    amp = inargs[1];
-    trim = inargs[2];
-    feedback = inargs[3];
+    trim = inargs[1];
+    feedback = inargs[2];
+    feedforward = inargs[3];
     control = inargs[4];
     control == 0 ? control = 0.001 : control = control;
     for (int i=offset; i < nsmps; i++) 
@@ -65,15 +65,17 @@ struct Wavefolder : csnd::Plugin<1, 6>
         if (mode == 1) // triangle fold
         {
           MYFLT p = 1.0 / control;
-          MYFLT x = in[i] * amp + p * 0.25;
+          MYFLT x = in[i] + p / 4.;
           out[i] = 4. * abs(x / p - floor(x / p + 0.5)); 
         } else // sine fold (default)
         {
-          MYFLT x = in[i] * amp;
+          MYFLT x = in[i];
           out[i] = sin(TWOPI * x * control); 
         }
-        out[i] += tanh(previous_sample * feedback);
+        MYFLT y = tanh(in[i]) * feedforward;
+        y += tanh(previous_sample * feedback);
         out[i] *= trim;
+        out[i] += y;
         previous_sample = in[i];
     }
     return OK;
