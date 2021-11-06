@@ -37,10 +37,10 @@
 
 struct Wavefolder : csnd::Plugin<1, 6> 
 {
-  double trim;
-  double feedback;
-  double feedforward;
-  double control; 
+  MYFLT trim;
+  MYFLT feedback;
+  MYFLT feedforward;
+  MYFLT control; 
   int mode;
   MYFLT previous_sample;
   
@@ -59,14 +59,16 @@ struct Wavefolder : csnd::Plugin<1, 6>
     feedback = inargs[2];
     feedforward = inargs[3];
     control = inargs[4];
-    control == 0 ? control = 0.001 : control = control;
+    control <= 0 ? control = 0.001 : control = control;
+    control >= 1 ? control = 1 : control = control;
+    control *= 0.5; 
     for (int i=offset; i < nsmps; i++) 
     {
         if (mode == 1) // triangle fold
         {
           MYFLT p = 1.0 / control;
           MYFLT x = in[i] + p / 4.;
-          out[i] = 4. * abs(x / p - floor(x / p + 0.5)); 
+          out[i] = 4. * abs(x / p - floor(x / p + 0.5)) - 1.; 
         } else // sine fold (default)
         {
           MYFLT x = in[i];
@@ -76,7 +78,7 @@ struct Wavefolder : csnd::Plugin<1, 6>
         y += tanh(previous_sample * feedback);
         out[i] *= trim;
         out[i] += y;
-        previous_sample = in[i];
+        previous_sample = out[i];
     }
     return OK;
   }

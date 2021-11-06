@@ -32,6 +32,8 @@ struct PDOsc : csnd::Plugin<1, 4>
   double idp,idx;
   double s,z;
   double sr;
+  MYFLT amp;
+  MYFLT freq;
 
   int init() 
   {
@@ -48,18 +50,21 @@ struct PDOsc : csnd::Plugin<1, 4>
   int aperf() 
   {
     csnd::AudioSig out(this, outargs(0));
-    MYFLT amp = inargs[0];
-    MYFLT freq = inargs[1];
-    MYFLT ph = freq / sr;
+    amp = inargs[0];
+    freq = inargs[1];
+    double pip = s * freq / sr;
     for (auto &sample : out) 
     {
-      idx = phase_table[(uint32_t)(idp * s)];
-      sample = amp * osc_table[(uint32_t)(idx * z)];
-      idp += ph;
+      double fract_p = idp - (int32)idp;
+      idx = phase_table[(uint32_t)(idp)] + ((phase_table[(uint32_t)(idp+1)] - phase_table[(uint32_t)(idp)]) * fract_p);
+      idx *= z; 
+      double fract_x = idx - (int32)idx;
+      sample = amp * (osc_table[(uint32_t)(idx)] + ((osc_table[(uint32_t)(idx+1)] - osc_table[(uint32_t)(idx)]) * fract_x));
+      idp += pip;
       while (idp < 0.)
-        idp += 1.;
-      while (idp >= 1.)
-        idp -= 1.;
+        idp += s;
+      while (idp >= s)
+        idp -= s;
     }
     return OK;
   }
@@ -77,14 +82,5 @@ void csnd::on_load(Csound *csound)
   csnd::plugin<PDOsc>(csound, "pdosc", "a", "kkii", csnd::thread::ia); 
   csnd::plugin<PDOsc>(csound, "pdosc", "a", "akii", csnd::thread::ia); 
   csnd::plugin<PDOsc>(csound, "pdosc", "a", "kaii", csnd::thread::ia); 
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "aaii", csnd::thread::ia); 
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "iiii", csnd::thread::ia);
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "ikii", csnd::thread::ia);
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "kiii", csnd::thread::ia);
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "aiii", csnd::thread::ia);
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "iaii", csnd::thread::ia);
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "kkii", csnd::thread::ia); 
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "akii", csnd::thread::ia); 
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "kaii", csnd::thread::ia); 
-  csnd::plugin<PDOsc>(csound, "pdosc", "a", "aaii", csnd::thread::ia); 
+  csnd::plugin<PDOsc>(csound, "pdosc", "a", "aaii", csnd::thread::ia);
 }
