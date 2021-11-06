@@ -32,6 +32,7 @@ struct PDOsc : csnd::Plugin<1, 4>
   double idp,idx;
   double s,z;
   double sr;
+  double pi;
   MYFLT amp;
   MYFLT freq;
 
@@ -52,7 +53,7 @@ struct PDOsc : csnd::Plugin<1, 4>
     csnd::AudioSig out(this, outargs(0));
     amp = inargs[0];
     freq = inargs[1];
-    double pip = s * freq / sr;
+    pi = s * freq / sr;
     for (auto &sample : out) 
     {
       double fract_p = idp - (int32)idp;
@@ -60,7 +61,7 @@ struct PDOsc : csnd::Plugin<1, 4>
       idx *= z; 
       double fract_x = idx - (int32)idx;
       sample = amp * (osc_table[(uint32_t)(idx)] + ((osc_table[(uint32_t)(idx+1)] - osc_table[(uint32_t)(idx)]) * fract_x));
-      idp += pip;
+      idp += pi;
       while (idp < 0.)
         idp += s;
       while (idp >= s)
