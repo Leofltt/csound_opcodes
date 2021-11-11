@@ -17,6 +17,7 @@ To build and install (requires Csound and cmake)
 git clone https://github.com/Leofltt/csound_opcodes.git
 cd csound_opcodes
 mkdir build && cd build
+cmake ../
 make
 make install
 ```
