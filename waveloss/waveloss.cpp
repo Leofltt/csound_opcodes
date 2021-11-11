@@ -62,8 +62,8 @@ struct Waveloss : csnd::Plugin<1, 4>
       {
         if (mode == 1) 
         {
-          std::uniform_int_distribution<int> distribution(0,max);
-          int random_value = distribution(generator);
+          std::uniform_int_distribution<uint32_t> distribution(0,max);
+          uint32_t random_value = distribution(generator);
           on = random_value >= drop;
         } else 
         {
