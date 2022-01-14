@@ -39,6 +39,7 @@ struct Waveloss : csnd::Plugin<1, 4>
   bool on;
   int mode;
   MYFLT previous_sample;  
+  std::random_device rdev;
 
   int init() 
   {
@@ -61,7 +62,6 @@ struct Waveloss : csnd::Plugin<1, 4>
       {
         if (mode == 1) 
         {
-          std::random_device rdev;
           std::mt19937 generator(rdev());
           std::uniform_int_distribution<uint32_t> distribution(0,max);
           uint32_t random_value = distribution(generator);
