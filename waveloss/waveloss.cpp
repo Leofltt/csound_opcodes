@@ -39,7 +39,6 @@ struct Waveloss : csnd::Plugin<1, 4>
   bool on;
   int mode;
   MYFLT previous_sample;  
-  std::random_device rdev;
 
   int init() 
   {
@@ -56,13 +55,14 @@ struct Waveloss : csnd::Plugin<1, 4>
     csnd::AudioSig out(this, outargs(0));
     drop = inargs[1];
     max = inargs[2];
+    std::random_device rdev;
+    std::mt19937 generator(rdev());
     for (int i=offset; i < nsmps; i++) 
     {
       if (previous_sample <= 0 && in[i] >=0) 
       {
         if (mode == 1) 
         {
-          std::mt19937 generator(rdev());
           std::uniform_int_distribution<uint32_t> distribution(0,max);
           uint32_t random_value = distribution(generator);
           on = random_value >= drop;
