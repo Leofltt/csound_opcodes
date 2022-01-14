@@ -23,6 +23,7 @@
 
 #include <plugin.h>
 #include <random>
+#include <chrono>
 
 /*
  Divide an audio stream into tiny segments, using the signal's zero-crossings as segment boundaries, and discard a fraction of them (i.e. replace them with silence of the same length). The technique was described by Trevor Wishart in a lecture.
@@ -55,8 +56,8 @@ struct Waveloss : csnd::Plugin<1, 4>
     csnd::AudioSig out(this, outargs(0));
     drop = inargs[1];
     max = inargs[2];
-    std::random_device rdev;
-    std::mt19937 generator(rdev());
+    auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    std::mt19937 generator(seed);
     for (int i=offset; i < nsmps; i++) 
     {
       if (previous_sample <= 0 && in[i] >=0) 
