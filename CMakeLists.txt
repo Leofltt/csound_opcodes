@@ -285,30 +285,7 @@ add_definitions(${CLANG_DEFINITIONS_LIST})
 
 link_directories("/usr/local/lib")
 
-make_plugin(waveloss waveloss/waveloss.cpp)
-target_include_directories(waveloss PRIVATE
-${CSOUND_INCLUDE_DIRS})
-
-target_link_libraries(waveloss ${clang_libs})
-target_compile_options(waveloss PRIVATE "-std=c++17")
-
-make_plugin(pan3 pan3/pan3.cpp)
-target_include_directories(pan3 PRIVATE
-${CSOUND_INCLUDE_DIRS})
-
-target_link_libraries(pan3 ${clang_libs})
-target_compile_options(pan3 PRIVATE "-std=c++17")
-
-make_plugin(pdosc pdosc/pdosc.cpp)
-target_include_directories(pdosc PRIVATE
-${CSOUND_INCLUDE_DIRS})
-
-target_link_libraries(pdosc ${clang_libs})
-target_compile_options(pdosc PRIVATE "-std=c++17")
-
-make_plugin(wavefolder wavefolder/wavefolder.cpp)
-target_include_directories(wavefolder PRIVATE
-${CSOUND_INCLUDE_DIRS})
-
-target_link_libraries(wavefolder ${clang_libs})
-target_compile_options(wavefolder PRIVATE "-std=c++17")
+add_subdirectory(waveloss)
+add_subdirectory(wavefolder)
+add_subdirectory(pdosc)
+add_subdirectory(pan3)
