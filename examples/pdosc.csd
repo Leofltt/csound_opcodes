@@ -1,6 +1,6 @@
 <CsoundSynthesizer>
 <CsOptions>
--odac0 ;realtime audio out
+-odac ;realtime audio out
 --opcode-lib=~/Users/$USER/Library/csound/6.0/plugins64 ;update this path with your opcode folder
 </CsOptions>
 <CsInstruments>

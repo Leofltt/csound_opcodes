@@ -283,8 +283,6 @@ include_directories(${CLANG_INCLUDE_DIRS})
 separate_arguments(CLANG_DEFINITIONS_LIST NATIVE_COMMAND ${CLANG_DEFINITIONS})
 add_definitions(${CLANG_DEFINITIONS_LIST})
 
-link_directories("/usr/local/lib")
-
 add_subdirectory(waveloss)
 add_subdirectory(wavefolder)
 add_subdirectory(pdosc)
