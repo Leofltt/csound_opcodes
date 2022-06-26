@@ -54,8 +54,6 @@ struct UniComb : csnd::Plugin<1, 6>
     ff_delay_buffer.allocate(csound, maxdelay);
     fb_delay_iter = fb_delay_buffer.begin();
     ff_delay_iter = ff_delay_buffer.begin();
-    std::fill(fb_delay_buffer.begin(),fb_delay_buffer.end(),0.);
-    std::fill(ff_delay_buffer.begin(),ff_delay_buffer.end(),0.);
     return OK;
   }
   
