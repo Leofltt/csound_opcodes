@@ -92,5 +92,5 @@ struct UniComb : csnd::Plugin<1, 6>
 #include <modload.h>
 
 void csnd::on_load(Csound *csound) {
-  csnd::plugin<UniComb>(csound, "unicomb", "a", "akkkii", csnd::thread::ia);
+  csnd::plugin<UniComb>(csound, "unicomb", "a", "akkkkk", csnd::thread::ia);
 }
