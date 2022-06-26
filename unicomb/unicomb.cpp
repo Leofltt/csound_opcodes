@@ -22,6 +22,8 @@
 
 #include <plugin.h>
 
+#define MAXDELAY 1
+
 /*
  Parameters: 
  [0] : input
@@ -37,8 +39,8 @@ struct UniComb : csnd::Plugin<1, 6>
   MYFLT blend;
   MYFLT feedback;
   MYFLT feedforward;
-  MYFLT fbdelay;
-  MYFLT ffdelay; 
+  int fbdelay;
+  int ffdelay; 
   MYFLT maxdelay;
   csnd::AuxMem<MYFLT> fb_delay_buffer;
   csnd::AuxMem<MYFLT>::iterator fb_delay_iter;
@@ -47,10 +49,11 @@ struct UniComb : csnd::Plugin<1, 6>
   
   int init() 
   {
-    fbdelay = int(inargs[4]*csound->sr()*0.001);
-    ffdelay = inargs[5]*csound->sr()*0.001;
-    fb_delay_buffer.allocate(csound, fbdelay);
-    ff_delay_buffer.allocate(csound, ffdelay);
+    int maxdelay = csound->sr() * MAXDELAY;
+    // fbdelay = int(inargs[4]*csound->sr()*0.001);
+    // ffdelay = inargs[5]*csound->sr()*0.001;
+    fb_delay_buffer.allocate(csound, maxdelay);
+    ff_delay_buffer.allocate(csound, maxdelay);
     fb_delay_iter = fb_delay_buffer.begin();
     ff_delay_iter = ff_delay_buffer.begin();
     return OK;
@@ -63,14 +66,18 @@ struct UniComb : csnd::Plugin<1, 6>
     blend = inargs[1];
     feedback = inargs[2];
     feedforward = inargs[3];
+    fbdelay = int(inargs[4]*csound->sr()*0.001);
+    ffdelay = int(inargs[5]*csound->sr()*0.001);
 
     std::transform(in.begin(), in.end(), out.begin(), [this] (MYFLT s)
     {
-      MYFLT ff = *ff_delay_iter * feedforward;
+      auto delayed_iter_ff = ff_delay_iter - ffdelay;
+      auto delayed_iter_fb = fb_delay_iter - fbdelay;
+      MYFLT ff = *delayed_iter_ff * feedforward;
       *ff_delay_iter = s;
       if(++ff_delay_iter == ff_delay_buffer.end())
       ff_delay_iter = ff_delay_buffer.begin();
-      MYFLT fb = *fb_delay_iter * feedback;
+      MYFLT fb = *delayed_iter_fb * feedback;
       MYFLT y = fb + ff + s * blend; 
       *fb_delay_iter = y;
       if(++fb_delay_iter == fb_delay_buffer.end())
