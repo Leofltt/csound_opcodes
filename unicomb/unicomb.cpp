@@ -21,6 +21,7 @@
 */
 
 #include <plugin.h>
+#include "../Utils/utilities.h"
 
 #define MAXDELAY 1
 
@@ -61,11 +62,11 @@ struct UniComb : csnd::Plugin<1, 6>
   {
     csnd::AudioSig in(this, inargs(0));
     csnd::AudioSig out(this, outargs(0));
-    blend = inargs[1];
-    feedback = inargs[2];
-    feedforward = inargs[3];
-    fbdelay = int(inargs[4]*csound->sr()*0.001);
-    ffdelay = int(inargs[5]*csound->sr()*0.001);
+    blend = clamp_value(-1,1,inargs[1]);
+    feedback = clamp_value(-0.95,0.95,inargs[2]);
+    feedforward = clamp_value(-1,1,inargs[3]);
+    fbdelay = int(clamp_value(0,50,inargs[4])*csound->sr()*0.001);
+    ffdelay = int(clamp_value(0,50,inargs[5])*csound->sr()*0.001);
 
     std::transform(in.begin(), in.end(), out.begin(), [this] (MYFLT s)
     {
